@@ -180,6 +180,31 @@ def chart_view() -> str:
     return CHART_VIEW_HTML
 
 
+def decode_unicode(text: str) -> str:
+    """Decodifica caracteres Unicode escapados en un string."""
+    if text is None:
+        return None
+    if isinstance(text, str):
+        # Decodifica secuencias unicode_escape y luego a UTF-8
+        try:
+            return text.encode('utf-8').decode('unicode_escape').encode('latin-1').decode('utf-8')
+        except (UnicodeDecodeError, UnicodeEncodeError):
+            # Si falla, intenta solo decode unicode_escape
+            try:
+                return text.encode('utf-8').decode('unicode_escape')
+            except (UnicodeDecodeError, UnicodeEncodeError):
+                return text
+    return text
+
+
+def decode_dict_values(data: dict, keys: list) -> dict:
+    """Decodifica valores Unicode en las claves especificadas de un diccionario."""
+    for key in keys:
+        if key in data and isinstance(data[key], str):
+            data[key] = decode_unicode(data[key])
+    return data
+
+
 def fetch_finnhub(endpoint: str, params: dict = None) -> dict | list:
     """Hace request a Finnhub API"""
     url = f"{FINNHUB_URL}/{endpoint}"
@@ -188,6 +213,7 @@ def fetch_finnhub(endpoint: str, params: dict = None) -> dict | list:
     params['token'] = FINNHUB_API_KEY
     
     response = requests.get(url, params=params)
+    response.encoding = 'utf-8'  # Asegurar encoding UTF-8
     
     if response.status_code == 200:
         return response.json()
@@ -223,8 +249,8 @@ def GET_MARKET_NEWS(category: str = "general", min_id: int = 0) -> dict:
             news_list.append({
                 "id": article.get('id'),
                 "category": article.get('category'),
-                "headline": article.get('headline'),
-                "summary": article.get('summary'),
+                "headline": decode_unicode(article.get('headline')),
+                "summary": decode_unicode(article.get('summary')),
                 "source": article.get('source'),
                 "url": article.get('url'),
                 "image": article.get('image'),
@@ -270,8 +296,8 @@ def GET_COMPANY_NEWS(symbol: str, from_date: str, to_date: str) -> dict:
             news_list.append({
                 "id": article.get('id'),
                 "category": article.get('category'),
-                "headline": article.get('headline'),
-                "summary": article.get('summary'),
+                "headline": decode_unicode(article.get('headline')),
+                "summary": decode_unicode(article.get('summary')),
                 "source": article.get('source'),
                 "url": article.get('url'),
                 "image": article.get('image'),
@@ -494,9 +520,9 @@ def SET_CHART(
             "success": True,
             "message": f"Gráfico '{titulo}' generado exitosamente",
             "chart_data": chart_data
-        })
+        }, ensure_ascii=False)
     except Exception as e:
-        return json.dumps({"error": str(e)})
+        return json.dumps({"error": str(e)}, ensure_ascii=False)
 
 
 
