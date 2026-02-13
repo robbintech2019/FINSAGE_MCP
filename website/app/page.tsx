@@ -2,7 +2,7 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { Sun, Moon, Github, Rocket, TrendingUp, Zap, Terminal, BarChart3, Newspaper, Calendar, DollarSign, LineChart, Globe, Sparkles } from "lucide-react"
+import { Sun, Moon, Github, Rocket, TrendingUp, Zap, Terminal, BarChart3, Newspaper, Calendar, DollarSign, LineChart, Globe, Sparkles, Info, Activity, PieChart, CalendarDays, BarChart2 } from "lucide-react"
 import { useI18n } from "@/lib/i18n"
 import { HeroChart } from "@/components/HeroChart"
 
@@ -31,6 +31,9 @@ export default function Home() {
             <span className="text-lg font-display font-bold">FinSage MCP</span>
           </div>
           <div className="flex items-center gap-4 md:gap-6">
+            <a href="#what-is" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hidden sm:block">
+              {t("whatIsTag")}
+            </a>
             <a href="#use-cases" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hidden sm:block">
               {t("useCases")}
             </a>
@@ -112,6 +115,54 @@ export default function Home() {
             <div className="relative">
               <HeroChart locale={locale} />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* What is FinSage Section */}
+      <section id="what-is" className="relative py-24 md:py-32">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+        <div className="container relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 rounded-full border border-info/40 bg-info/5 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-info mb-4">
+              <Info className="h-3 w-3" />
+              {t("whatIsTag")}
+            </div>
+            <h2 className="text-3xl font-display font-bold tracking-tight sm:text-4xl md:text-5xl mb-4">
+              <span className="gradient-text">{t("whatIsTitle")}</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              {t("whatIsDescription")}
+            </p>
+          </div>
+          
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[
+              { icon: Activity, titleKey: "whatIsFeature1Title" as const, descKey: "whatIsFeature1Desc" as const, color: "primary" },
+              { icon: Newspaper, titleKey: "whatIsFeature2Title" as const, descKey: "whatIsFeature2Desc" as const, color: "secondary" },
+              { icon: TrendingUp, titleKey: "whatIsFeature3Title" as const, descKey: "whatIsFeature3Desc" as const, color: "accent" },
+              { icon: PieChart, titleKey: "whatIsFeature4Title" as const, descKey: "whatIsFeature4Desc" as const, color: "warning" },
+              { icon: CalendarDays, titleKey: "whatIsFeature5Title" as const, descKey: "whatIsFeature5Desc" as const, color: "info" },
+              { icon: BarChart2, titleKey: "whatIsFeature6Title" as const, descKey: "whatIsFeature6Desc" as const, color: "primary" },
+            ].map((feature, i) => {
+              const Icon = feature.icon
+              const colorClasses = {
+                primary: "text-primary bg-primary/10 border-primary/20",
+                secondary: "text-secondary bg-secondary/10 border-secondary/20",
+                accent: "text-accent bg-accent/10 border-accent/20",
+                warning: "text-warning bg-warning/10 border-warning/20",
+                info: "text-info bg-info/10 border-info/20",
+              }
+              return (
+                <div key={i} className="glass-card rounded-2xl p-6 hover:border-primary/30 transition-all">
+                  <div className={`inline-flex h-12 w-12 items-center justify-center rounded-xl border ${colorClasses[feature.color as keyof typeof colorClasses]} mb-4`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-lg font-display font-semibold mb-2 text-foreground">{t(feature.titleKey)}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t(feature.descKey)}</p>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>

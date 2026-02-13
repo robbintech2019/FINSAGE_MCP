@@ -19,6 +19,23 @@ const translations = {
     getStarted: "Comenzar",
     viewOnGithub: "Ver en GitHub",
     
+    // What is FinSage
+    whatIsTag: "¿Qué es FinSage?",
+    whatIsTitle: "Tu Asistente Financiero con IA",
+    whatIsDescription: "FinSage conecta agentes de IA como Claude con el API de Finnhub.io para obtener datos del mercado en tiempo real. Pregunta sobre cualquier acción, analiza tendencias, y toma decisiones financieras informadas — todo desde tu chat. Y esto es solo el comienzo, seguimos agregando más herramientas.",
+    whatIsFeature1Title: "Cotizaciones en Tiempo Real",
+    whatIsFeature1Desc: "Obtén el precio actual de cualquier acción de EE.UU. con cambio porcentual, máximos y mínimos del día.",
+    whatIsFeature2Title: "Noticias del Mercado",
+    whatIsFeature2Desc: "Accede a las últimas noticias financieras filtradas por categoría: general, forex, crypto o fusiones.",
+    whatIsFeature3Title: "Análisis de Earnings",
+    whatIsFeature3Desc: "Revisa el historial de reportes de ganancias y descubre si una empresa superó o falló las expectativas.",
+    whatIsFeature4Title: "Métricas Financieras",
+    whatIsFeature4Desc: "Consulta ratios clave como P/E, márgenes de ganancia, 52-week high/low y más indicadores.",
+    whatIsFeature5Title: "Calendario de Reportes",
+    whatIsFeature5Desc: "Sabe exactamente cuándo cada empresa publicará sus resultados trimestrales.",
+    whatIsFeature6Title: "Visualizaciones Interactivas",
+    whatIsFeature6Desc: "Genera gráficos dinámicos directamente en el chat para visualizar datos y comparar métricas.",
+
     // Use Cases
     useCasesTag: "Casos de Uso",
     useCasesTitle: "Ejemplos en Acción",
@@ -70,6 +87,23 @@ const translations = {
     getStarted: "Get Started",
     viewOnGithub: "View on GitHub",
     
+    // What is FinSage
+    whatIsTag: "What is FinSage?",
+    whatIsTitle: "Your AI-Powered Financial Assistant",
+    whatIsDescription: "FinSage connects AI agents like Claude with the Finnhub.io API to get real-time market data. Ask about any stock, analyze trends, and make informed financial decisions — all from your chat. And this is just the beginning, we keep adding more tools.",
+    whatIsFeature1Title: "Real-Time Quotes",
+    whatIsFeature1Desc: "Get the current price of any US stock with percentage change, daily highs and lows.",
+    whatIsFeature2Title: "Market News",
+    whatIsFeature2Desc: "Access the latest financial news filtered by category: general, forex, crypto, or mergers.",
+    whatIsFeature3Title: "Earnings Analysis",
+    whatIsFeature3Desc: "Review earnings report history and discover if a company beat or missed expectations.",
+    whatIsFeature4Title: "Financial Metrics",
+    whatIsFeature4Desc: "Query key ratios like P/E, profit margins, 52-week high/low and more indicators.",
+    whatIsFeature5Title: "Report Calendar",
+    whatIsFeature5Desc: "Know exactly when each company will publish their quarterly results.",
+    whatIsFeature6Title: "Interactive Visualizations",
+    whatIsFeature6Desc: "Generate dynamic charts directly in chat to visualize data and compare metrics.",
+
     // Use Cases
     useCasesTag: "Use Cases",
     useCasesTitle: "Examples in Action",
