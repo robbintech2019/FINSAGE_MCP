@@ -14,7 +14,7 @@ const translations = {
     // Hero
     mcpServer: "MCP Server",
     heroTitle1: "FinSage",
-    heroTitle2: "Chart Gallery",
+    heroTitle2: "Stock Market Data",
     heroDescription: "Servidor MCP que conecta tu asistente de IA con datos financieros en tiempo real via Finnhub API.",
     getStarted: "Comenzar",
     viewOnGithub: "Ver en GitHub",
@@ -82,7 +82,7 @@ const translations = {
     // Hero
     mcpServer: "MCP Server",
     heroTitle1: "FinSage",
-    heroTitle2: "Chart Gallery",
+    heroTitle2: "Stock Market Data",
     heroDescription: "MCP server that connects your AI assistant with real-time financial data via Finnhub API.",
     getStarted: "Get Started",
     viewOnGithub: "View on GitHub",

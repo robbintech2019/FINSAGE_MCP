@@ -7,7 +7,7 @@ import { I18nProvider } from "@/lib/i18n"
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" })
 
 export const metadata: Metadata = {
-  title: "FinSage MCP - Chart Gallery",
+  title: "FinSage MCP - Stock Market Data",
   description: "Servidor MCP que conecta tu asistente de IA con datos financieros en tiempo real via Finnhub API.",
   keywords: ["FinSage", "MCP", "AI", "finanzas", "inversión", "datos financieros", "Finnhub"],
   authors: [{ name: "FinSage Team" }],
