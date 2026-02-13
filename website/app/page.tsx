@@ -2,8 +2,9 @@
 
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
-import { Sun, Moon, Github, Rocket, TrendingUp, Zap, Terminal, BarChart3, Newspaper, Calendar, DollarSign, LineChart, Globe } from "lucide-react"
+import { Sun, Moon, Github, Rocket, TrendingUp, Zap, Terminal, BarChart3, Newspaper, Calendar, DollarSign, LineChart, Globe, Sparkles } from "lucide-react"
 import { useI18n } from "@/lib/i18n"
+import { HeroChart } from "@/components/HeroChart"
 
 export default function Home() {
   const { theme, setTheme } = useTheme()
@@ -30,6 +31,9 @@ export default function Home() {
             <span className="text-lg font-display font-bold">FinSage MCP</span>
           </div>
           <div className="flex items-center gap-4 md:gap-6">
+            <a href="#use-cases" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hidden sm:block">
+              {t("useCases")}
+            </a>
             <a href="#tools" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors hidden sm:block">
               {t("tools")}
             </a>
@@ -106,34 +110,57 @@ export default function Home() {
               </div>
             </div>
             <div className="relative">
-              <div className="glass-card rounded-2xl overflow-hidden glow-primary">
-                <div className="bg-muted/50 px-4 py-3 border-b border-border/50 flex items-center gap-2">
-                  <div className="flex gap-1.5">
-                    <div className="h-3 w-3 rounded-full bg-accent"></div>
-                    <div className="h-3 w-3 rounded-full bg-warning"></div>
-                    <div className="h-3 w-3 rounded-full bg-primary"></div>
+              <HeroChart locale={locale} />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Use Cases Section */}
+      <section id="use-cases" className="relative py-24 md:py-32">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/20 to-transparent" />
+        <div className="container relative">
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/5 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase text-primary mb-4">
+              <Sparkles className="h-3 w-3" />
+              {t("useCasesTag")}
+            </div>
+            <h2 className="text-3xl font-display font-bold tracking-tight sm:text-4xl md:text-5xl mb-4">
+              <span className="gradient-text">{t("useCasesTitle")}</span>
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              {t("useCasesDescription")}
+            </p>
+          </div>
+          
+          <div className="space-y-16">
+            {[
+              { promptKey: "demo1Prompt" as const, image: "/FINSAGE_MCP/images/demo1.png" },
+              { promptKey: "demo2Prompt" as const, image: "/FINSAGE_MCP/images/demo2.png" },
+              { promptKey: "demo3Prompt" as const, image: "/FINSAGE_MCP/images/demo3.png" },
+            ].map((demo, i) => (
+              <div key={i} className="space-y-6">
+                <div className="glass-card rounded-xl p-4 max-w-3xl mx-auto">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 h-8 w-8 rounded-full bg-secondary/20 border border-secondary/30 flex items-center justify-center">
+                      <span className="text-xs font-bold text-secondary">?</span>
+                    </div>
+                    <p className="text-sm text-foreground leading-relaxed pt-1">
+                      "{t(demo.promptKey)}"
+                    </p>
                   </div>
-                  <span className="text-xs font-medium text-muted-foreground ml-auto">{t("aiAssistant")}</span>
                 </div>
-                <div className="p-6 space-y-4 min-h-[300px]">
-                  <div className="flex justify-end">
-                    <div className="rounded-2xl rounded-tr-sm bg-secondary/20 border border-secondary/30 px-4 py-2.5 max-w-[80%]">
-                      <p className="text-sm">{t("askApple")}</p>
-                    </div>
-                  </div>
-                  <div className="flex justify-start">
-                    <div className="rounded-2xl rounded-tl-sm bg-muted/50 border border-border/50 px-4 py-3 max-w-[85%]">
-                      <p className="font-display font-semibold text-primary">AAPL - Apple Inc.</p>
-                      <div className="mt-2 space-y-1 text-sm">
-                        <p>💵 {t("currentPrice")}: <span className="font-semibold">$178.25</span></p>
-                        <p className="text-primary">📈 {t("change")}: +$2.50 (+1.42%)</p>
-                        <p className="text-muted-foreground">📊 {t("high")}: $179.80 | {t("low")}: $176.50</p>
-                      </div>
-                    </div>
+                <div className="max-w-4xl mx-auto">
+                  <div className="glass-card rounded-2xl overflow-hidden p-2">
+                    <img
+                      src={demo.image}
+                      alt={`Demo ${i + 1}`}
+                      className="w-full h-auto rounded-xl"
+                    />
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
