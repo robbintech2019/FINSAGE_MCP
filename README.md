@@ -1,25 +1,25 @@
 # 🧠 FinSage MCP
 
-**Dale superpoderes financieros a tu asistente de IA 🚀**
+FinSage es un servidor MCP (Model Context Protocol) que conecta agentes de IA como Claude con el API de Finnhub.io para obtener datos del mercado en tiempo real. Pregunta sobre cualquier acción, analiza tendencias, y toma decisiones financieras informadas — todo desde tu chat.
 
-FinSage es un servidor MCP (Model Context Protocol) que te permite obtener información financiera en tiempo real directamente desde tu asistente de IA favorito. Perfecto para inversionistas que quieren tomar decisiones informadas.
+Y esto es solo el comienzo, seguimos agregando más herramientas.
 
 ---
 
-## 🎯 ¿Qué es esto?
+## 🎯 ¿Qué puedes hacer con FinSage?
 
-Imagina poder preguntarle a tu asistente de IA:
-- *"¿Cuál es el precio actual de Apple?"*
-- *"¿Qué noticias hay sobre Tesla?"*
-- *"¿Cuándo reporta earnings Microsoft?"*
-
-FinSage hace exactamente eso. Conecta tu asistente de IA con datos financieros reales.
+- **Cotizaciones en Tiempo Real** - Obtén el precio actual de cualquier acción de EE.UU. con cambio porcentual, máximos y mínimos del día.
+- **Noticias del Mercado** - Accede a las últimas noticias financieras filtradas por categoría: general, forex, crypto o fusiones.
+- **Análisis de Earnings** - Revisa el historial de reportes de ganancias y descubre si una empresa superó o falló las expectativas.
+- **Métricas Financieras** - Consulta ratios clave como P/E, márgenes de ganancia, 52-week high/low y más indicadores.
+- **Calendario de Reportes** - Sabe exactamente cuándo cada empresa publicará sus resultados trimestrales.
+- **Visualizaciones Interactivas** - Genera gráficos dinámicos directamente en el chat para visualizar datos y comparar métricas.
 
 ---
 
 ## 🛠️ Herramientas Disponibles
 
-FinSage actualmente cuenta con **7 herramientas** (y seguimos agregando más):
+FinSage actualmente cuenta con **7 herramientas**:
 
 | Herramienta | ¿Qué hace? | Ejemplo de uso |
 |-------------|------------|----------------|
@@ -29,66 +29,50 @@ FinSage actualmente cuenta con **7 herramientas** (y seguimos agregando más):
 | 💵 **GET_QUOTE** | Obtiene el precio actual de una acción en tiempo real, incluyendo cambio del día, máximo, mínimo y apertura. | *"¿Cuánto vale TSLA ahora?"* |
 | 📊 **GET_BASIC_FINANCIALS** | Métricas financieras clave: P/E ratio, máximo/mínimo de 52 semanas, márgenes, y más. | *"Dame los financials de MSFT"* |
 | 📈 **GET_EARNING_SURPRISES** | Historial de sorpresas en earnings: cuánto superó o falló una empresa vs las expectativas. | *"¿Cómo le fue a GOOGL en earnings?"* |
-| 📉 **SET_CHART** | Crea gráficos interactivos con Chart.js. Soporta líneas, barras, pie, dona, radar y más. Usa MCP Apps para renderizar UI en el chat. | *"Muéstrame un gráfico de earnings de AAPL"* |
+| 📉 **SET_CHART** | Crea gráficos interactivos con Chart.js. Soporta líneas, barras, pie, dona, radar y más. Incluye toggle de tema dark/light. | *"Muéstrame un gráfico de earnings de AAPL"* |
 
 ---
 
-## 🚀 Instalación Paso a Paso
+## 🚀 Instalación
 
-### Paso 1: Obtén tu API Key (Gratis)
+### 1. Obtén tu API Key (Gratis)
 
 1. Ve a [Finnhub.io](https://finnhub.io/)
 2. Crea una cuenta gratuita
 3. Copia tu API Key desde el dashboard
 
-> 💡 **Nota:** Finnhub ofrece un plan gratuito que es suficiente para uso personal. No necesitas pagar nada.
+> 💡 El plan gratuito es suficiente para uso personal.
 
-### Paso 2: Configura el proyecto
+### 2. Configura el proyecto
 
 ```bash
-# Clona el repositorio
-git clone https://github.com/tu-usuario/finsage-mcp.git
-cd finsage-mcp
-
-# Instala las dependencias
+git clone https://github.com/robbintech2019/FINSAGE_MCP.git
+cd FINSAGE_MCP
 pip install -r requirements.txt
 ```
 
-> ⚠️ **Requisitos de versión:** Este proyecto requiere `mcp>=1.26.0` y `fastmcp>=2.14.5` para soportar MCP Apps (visualizaciones interactivas). Si tienes versiones anteriores, actualiza con:
-> ```bash
-> pip install --upgrade "mcp>=1.26.0" "fastmcp>=2.14.5"
-> ```
+### 3. Configura tu API Key
 
-### Paso 3: Configura tu API Key
-
-1. Busca el archivo `.env.example` en la carpeta del proyecto
-2. Renómbralo a `.env` (solo quita ".example" del nombre)
-3. Abre el archivo y reemplaza `tu_api_key_aqui` con tu API Key de Finnhub
+Renombra `.env.example` a `.env` y agrega tu API Key:
 
 ```
-FINNHUB_API_KEY=tu_api_key_real_aqui
+FINNHUB_API_KEY=tu_api_key_aqui
 ```
 
-### Paso 4: Conecta con tu asistente de IA
+### 4. Conecta con tu asistente de IA
 
-Agrega esta configuración en tu archivo de configuración MCP:
+Agrega esta configuración en tu archivo MCP:
 
 ```json
 {
   "mcpServers": {
     "finsage": {
       "command": "python",
-      "args": ["/ruta/completa/a/tu/carpeta/server.py"]
+      "args": ["/ruta/a/server.py"]
     }
   }
 }
 ```
-
-> ⚠️ **Importante:** Reemplaza `/ruta/completa/a/tu/carpeta/server.py` con la ubicación real donde guardaste el proyecto.
->
-> **Ejemplo en Mac:** `/Users/tunombre/Documents/finsage-mcp/server.py`
->
-> **Ejemplo en Windows:** `C:\\Users\\tunombre\\Documents\\finsage-mcp\\server.py`
 
 ---
 
@@ -96,21 +80,20 @@ Agrega esta configuración en tu archivo de configuración MCP:
 
 ```
 finsage-mcp/
-├── server.py          # El servidor principal (aquí está toda la magia)
-├── requirements.txt   # Dependencias del proyecto
-├── .env.example       # Plantilla para tu API Key
+├── server.py          # Servidor MCP con todas las herramientas
+├── templates/         # Templates HTML para visualizaciones
+├── requirements.txt   # Dependencias
 ├── .env               # Tu API Key (no se sube a git)
-├── .gitignore         # Archivos ignorados por git
-└── README.md          # Este archivo
+└── website/           # Landing page del proyecto
 ```
 
 ---
 
-## 📋 TODO - Próximas Funcionalidades
+## 📋 Próximas Funcionalidades
 
-- [ ] **Búsqueda en bulk** - Consultar múltiples símbolos a la vez en lugar de uno por uno
-- [ ] **Análisis de sentimiento** - Herramienta para analizar el sentimiento de noticias financieras
-- [ ] **Top Movers** - Ver las acciones con mayor movimiento del día (ganadores y perdedores)
+- [ ] Búsqueda en bulk - Consultar múltiples símbolos a la vez
+- [ ] Análisis de sentimiento de noticias financieras
+- [ ] Top Movers - Acciones con mayor movimiento del día
 
 ---
 
@@ -122,8 +105,8 @@ finsage-mcp/
 
 ## 📄 Licencia
 
-MIT License - Usa este proyecto como quieras.
+MIT License
 
 ---
 
-**Hecho con ❤️ para inversionistas y programadores**
+**Hecho con 💚 para inversionistas y programadores**
