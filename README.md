@@ -1,6 +1,8 @@
 # 🧠 FinSage MCP
 
-FinSage es un servidor MCP (Model Context Protocol) que conecta agentes de IA como Claude con el API de Finnhub.io para obtener datos del mercado en tiempo real. Pregunta sobre cualquier acción, analiza tendencias, y toma decisiones financieras informadas — todo desde tu chat.
+🌐 **[Website](https://robbintech2019.github.io/FINSAGE_MCP/)**
+
+FinSage es un servidor MCP (Model Context Protocol) que conecta agentes de IA como Claude con el API de Finnhub.io(se agregaran otras en el futuro) para obtener datos del mercado en tiempo real. Pregunta sobre cualquier acción, analiza tendencias, y toma decisiones financieras informadas — todo desde tu chat.
 
 Y esto es solo el comienzo, seguimos agregando más herramientas.
 
