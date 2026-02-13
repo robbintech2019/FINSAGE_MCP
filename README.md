@@ -19,7 +19,7 @@ FinSage hace exactamente eso. Conecta tu asistente de IA con datos financieros r
 
 ## 🛠️ Herramientas Disponibles
 
-FinSage actualmente cuenta con **6 herramientas** (y seguimos agregando más):
+FinSage actualmente cuenta con **7 herramientas** (y seguimos agregando más):
 
 | Herramienta | ¿Qué hace? | Ejemplo de uso |
 |-------------|------------|----------------|
@@ -29,6 +29,7 @@ FinSage actualmente cuenta con **6 herramientas** (y seguimos agregando más):
 | 💵 **GET_QUOTE** | Obtiene el precio actual de una acción en tiempo real, incluyendo cambio del día, máximo, mínimo y apertura. | *"¿Cuánto vale TSLA ahora?"* |
 | 📊 **GET_BASIC_FINANCIALS** | Métricas financieras clave: P/E ratio, máximo/mínimo de 52 semanas, márgenes, y más. | *"Dame los financials de MSFT"* |
 | 📈 **GET_EARNING_SURPRISES** | Historial de sorpresas en earnings: cuánto superó o falló una empresa vs las expectativas. | *"¿Cómo le fue a GOOGL en earnings?"* |
+| 📉 **SET_CHART** | Crea gráficos interactivos con Chart.js. Soporta líneas, barras, pie, dona, radar y más. Usa MCP Apps para renderizar UI en el chat. | *"Muéstrame un gráfico de earnings de AAPL"* |
 
 ---
 
@@ -52,6 +53,11 @@ cd finsage-mcp
 # Instala las dependencias
 pip install -r requirements.txt
 ```
+
+> ⚠️ **Requisitos de versión:** Este proyecto requiere `mcp>=1.26.0` y `fastmcp>=2.14.5` para soportar MCP Apps (visualizaciones interactivas). Si tienes versiones anteriores, actualiza con:
+> ```bash
+> pip install --upgrade "mcp>=1.26.0" "fastmcp>=2.14.5"
+> ```
 
 ### Paso 3: Configura tu API Key
 
@@ -97,6 +103,14 @@ finsage-mcp/
 ├── .gitignore         # Archivos ignorados por git
 └── README.md          # Este archivo
 ```
+
+---
+
+## 📋 TODO - Próximas Funcionalidades
+
+- [ ] **Búsqueda en bulk** - Consultar múltiples símbolos a la vez en lugar de uno por uno
+- [ ] **Análisis de sentimiento** - Herramienta para analizar el sentimiento de noticias financieras
+- [ ] **Top Movers** - Ver las acciones con mayor movimiento del día (ganadores y perdedores)
 
 ---
 
