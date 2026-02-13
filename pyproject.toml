@@ -1,0 +1,17 @@
+[project]
+name = "finsage-mcp"
+version = "0.1.0"
+description = "MCP Server para datos financieros via Finnhub API"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp[cli]",
+    "requests",
+    "python-dotenv",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project.scripts]
+finsage-mcp = "finsage_mcp.server:mcp.run"
