@@ -9,6 +9,7 @@
   <style>
     :root {
       --bg-body: #0B0F1A;
+      --bg-body-gradient: linear-gradient(165deg, #0B0F1A 0%, #111827 50%, #0F172A 100%);
       --bg-card: rgba(15,23,42,0.7);
       --bg-input: rgba(0,0,0,0.35);
       --text-main: #E2E8F0;
@@ -21,13 +22,42 @@
       --warning: #FFB800;
       --info: #00B4D8;
       --pink: #FF69B4;
+      --chart-grid: rgba(100,116,139,0.15);
+      --chart-tick: #64748B;
+      --chart-legend: #CBD5E1;
+      --tooltip-bg: rgba(15,23,42,0.95);
+      --tooltip-text: #E2E8F0;
     }
+    
+    [data-theme="light"] {
+      --bg-body: #F8FAFC;
+      --bg-body-gradient: linear-gradient(165deg, #F8FAFC 0%, #F1F5F9 50%, #E2E8F0 100%);
+      --bg-card: rgba(255,255,255,0.9);
+      --bg-input: rgba(241,245,249,0.8);
+      --text-main: #1E293B;
+      --text-muted: #475569;
+      --text-dim: #64748B;
+      --border-color: rgba(148,163,184,0.3);
+      --primary: #059669;
+      --secondary: #6D28D9;
+      --accent: #DC2626;
+      --warning: #D97706;
+      --info: #0284C7;
+      --pink: #DB2777;
+      --chart-grid: rgba(148,163,184,0.2);
+      --chart-tick: #64748B;
+      --chart-legend: #475569;
+      --tooltip-bg: rgba(255,255,255,0.95);
+      --tooltip-text: #1E293B;
+    }
+    
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
-      background: linear-gradient(165deg, #0B0F1A 0%, #111827 50%, #0F172A 100%);
+      background: var(--bg-body-gradient);
       min-height: 100vh; 
       font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
       color: var(--text-main);
+      transition: background 0.3s, color 0.3s;
     }
     .container { max-width: 800px; margin: 0 auto; padding: 24px; }
     .loading { 
@@ -42,7 +72,7 @@
     .spinner {
       width: 32px;
       height: 32px;
-      border: 3px solid rgba(100,116,139,0.2);
+      border: 3px solid var(--border-color);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -60,10 +90,11 @@
       letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--primary);
-      border: 1px solid rgba(0,229,160,0.4);
+      border: 1px solid currentColor;
       border-radius: 20px;
       padding: 4px 14px;
       margin-bottom: 12px;
+      opacity: 0.8;
     }
     h2 { 
       font-size: 24px; 
@@ -91,7 +122,7 @@
       padding: 14px 20px; 
       min-width: 130px; 
       text-align: center;
-      transition: border-color 0.3s;
+      transition: border-color 0.3s, background 0.3s;
     }
     .metric-card:hover {
       border-color: var(--primary);
@@ -120,10 +151,11 @@
       border: 1px solid var(--border-color);
       border-radius: 16px;
       overflow: hidden;
-      transition: border-color 0.3s;
+      transition: border-color 0.3s, background 0.3s;
+      position: relative;
     }
     .chart-card:hover {
-      border-color: rgba(0,229,160,0.3);
+      border-color: var(--primary);
     }
     .chart-header {
       padding: 20px 20px 0;
@@ -145,7 +177,7 @@
     .chart-title {
       font-size: 17px;
       font-weight: 700;
-      color: #F1F5F9;
+      color: var(--text-main);
       font-family: 'Space Grotesk', sans-serif;
       margin: 0;
     }
@@ -158,6 +190,7 @@
       display: flex;
       gap: 6px;
       flex-wrap: wrap;
+      align-items: center;
     }
     .type-badge {
       font-size: 10px;
@@ -170,6 +203,10 @@
       border-radius: 6px;
       padding: 3px 10px;
     }
+    [data-theme="light"] .type-badge {
+      background: rgba(109,40,217,0.1);
+      border-color: rgba(109,40,217,0.3);
+    }
     .live-badge {
       font-size: 10px;
       font-weight: 700;
@@ -178,6 +215,27 @@
       background: rgba(0,229,160,0.15);
       border-radius: 6px;
       padding: 3px 10px;
+    }
+    [data-theme="light"] .live-badge {
+      background: rgba(5,150,105,0.1);
+    }
+    
+    .theme-toggle {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 10px;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .theme-toggle:hover {
+      border-color: var(--primary);
+      background: var(--bg-card);
     }
     
     .chart-container { 
@@ -193,6 +251,7 @@
       background: var(--bg-input);
       border-left: 3px solid var(--primary);
       border-radius: 0 10px 10px 0;
+      transition: background 0.3s;
     }
     .insights-title { 
       font-size: 10px;
@@ -205,7 +264,7 @@
     .insights ul { 
       margin: 0; 
       padding-left: 18px; 
-      color: #CBD5E1; 
+      color: var(--text-muted); 
       font-size: 12px; 
       line-height: 1.7; 
     }
@@ -226,35 +285,60 @@
 
     const app = new App({ name: "FinSage Chart", version: "1.0.0" });
     let chartInstance = null;
+    let currentChartData = null;
 
-    const COLORS = {
-      primary: '#00E5A0',
-      secondary: '#7B61FF',
-      accent: '#FF6B6B',
-      warning: '#FFB800',
-      info: '#00B4D8',
-      pink: '#FF69B4',
-      palette: [
-        '#00E5A0',
-        '#7B61FF',
-        '#FF6B6B',
-        '#FFB800',
-        '#00B4D8',
-        '#FF69B4',
-        '#A78BFA',
-        '#34D399',
-      ],
-      paletteBg: [
-        'rgba(0,229,160,0.25)',
-        'rgba(123,97,255,0.25)',
-        'rgba(255,107,107,0.25)',
-        'rgba(255,184,0,0.25)',
-        'rgba(0,180,216,0.25)',
-        'rgba(255,105,180,0.25)',
-        'rgba(167,139,250,0.25)',
-        'rgba(52,211,153,0.25)',
-      ]
-    };
+    // Theme management
+    function getTheme() {
+      return localStorage.getItem('finsage-theme') || 'dark';
+    }
+    
+    function setTheme(theme) {
+      localStorage.setItem('finsage-theme', theme);
+      document.documentElement.setAttribute('data-theme', theme);
+      if (currentChartData && chartInstance) {
+        updateChartColors();
+      }
+    }
+    
+    function toggleTheme() {
+      const current = getTheme();
+      setTheme(current === 'dark' ? 'light' : 'dark');
+      updateToggleIcon();
+    }
+    
+    function updateToggleIcon() {
+      const btn = document.getElementById('theme-toggle');
+      if (btn) {
+        btn.textContent = getTheme() === 'dark' ? '☀️' : '🌙';
+      }
+    }
+    
+    // Initialize theme
+    setTheme(getTheme());
+
+    function getColors() {
+      const isDark = getTheme() === 'dark';
+      return {
+        primary: isDark ? '#00E5A0' : '#059669',
+        secondary: isDark ? '#7B61FF' : '#6D28D9',
+        accent: isDark ? '#FF6B6B' : '#DC2626',
+        warning: isDark ? '#FFB800' : '#D97706',
+        info: isDark ? '#00B4D8' : '#0284C7',
+        pink: isDark ? '#FF69B4' : '#DB2777',
+        palette: isDark 
+          ? ['#00E5A0', '#7B61FF', '#FF6B6B', '#FFB800', '#00B4D8', '#FF69B4', '#A78BFA', '#34D399']
+          : ['#059669', '#6D28D9', '#DC2626', '#D97706', '#0284C7', '#DB2777', '#7C3AED', '#10B981'],
+        paletteBg: isDark
+          ? ['rgba(0,229,160,0.25)', 'rgba(123,97,255,0.25)', 'rgba(255,107,107,0.25)', 'rgba(255,184,0,0.25)', 'rgba(0,180,216,0.25)', 'rgba(255,105,180,0.25)', 'rgba(167,139,250,0.25)', 'rgba(52,211,153,0.25)']
+          : ['rgba(5,150,105,0.2)', 'rgba(109,40,217,0.2)', 'rgba(220,38,38,0.2)', 'rgba(217,119,6,0.2)', 'rgba(2,132,199,0.2)', 'rgba(219,39,119,0.2)', 'rgba(124,58,237,0.2)', 'rgba(16,185,129,0.2)'],
+        grid: isDark ? 'rgba(100,116,139,0.15)' : 'rgba(148,163,184,0.2)',
+        tick: isDark ? '#64748B' : '#64748B',
+        legend: isDark ? '#CBD5E1' : '#475569',
+        tooltipBg: isDark ? 'rgba(15,23,42,0.95)' : 'rgba(255,255,255,0.95)',
+        tooltipText: isDark ? '#E2E8F0' : '#1E293B',
+        tooltipBorder: isDark ? '#00E5A0' : '#059669'
+      };
+    }
 
     const chartIcons = {
       line: '📈',
@@ -267,12 +351,69 @@
       scatter: '✨'
     };
 
+    function updateChartColors() {
+      if (!chartInstance) return;
+      
+      const COLORS = getColors();
+      const chartType = currentChartData.tipo || 'line';
+      
+      // Update datasets colors
+      chartInstance.data.datasets.forEach((dataset, i) => {
+        const color = COLORS.palette[i % COLORS.palette.length];
+        const bgColor = COLORS.paletteBg[i % COLORS.paletteBg.length];
+        
+        if (['pie', 'doughnut', 'polarArea'].includes(chartType)) {
+          dataset.backgroundColor = COLORS.palette.slice(0, dataset.data.length);
+          dataset.borderColor = getTheme() === 'dark' ? '#0F172A' : '#FFFFFF';
+        } else {
+          dataset.backgroundColor = bgColor;
+          dataset.borderColor = color;
+          dataset.pointBackgroundColor = color;
+          dataset.pointBorderColor = color;
+        }
+      });
+      
+      // Update options colors
+      const options = chartInstance.options;
+      
+      if (options.plugins?.legend?.labels) {
+        options.plugins.legend.labels.color = COLORS.legend;
+      }
+      
+      if (options.plugins?.tooltip) {
+        options.plugins.tooltip.backgroundColor = COLORS.tooltipBg;
+        options.plugins.tooltip.titleColor = COLORS.primary;
+        options.plugins.tooltip.bodyColor = COLORS.tooltipText;
+        options.plugins.tooltip.borderColor = COLORS.tooltipBorder;
+      }
+      
+      if (options.scales?.x) {
+        options.scales.x.grid.color = COLORS.grid;
+        options.scales.x.ticks.color = COLORS.tick;
+      }
+      if (options.scales?.y) {
+        options.scales.y.grid.color = COLORS.grid;
+        options.scales.y.ticks.color = COLORS.tick;
+      }
+      if (options.scales?.r) {
+        options.scales.r.grid.color = COLORS.grid;
+        options.scales.r.angleLines.color = COLORS.grid;
+        options.scales.r.pointLabels.color = COLORS.legend;
+        options.scales.r.ticks.color = COLORS.tick;
+      }
+      
+      chartInstance.update();
+    }
+
     function renderChart(data) {
+      currentChartData = data;
       const root = document.getElementById('root');
       root.className = 'container';
       
+      const COLORS = getColors();
       const chartType = data.tipo || 'line';
       const icon = chartIcons[chartType] || '📊';
+      const themeIcon = getTheme() === 'dark' ? '☀️' : '🌙';
       
       // Build metrics HTML
       let metricsHtml = '';
@@ -316,6 +457,7 @@
             <div class="badges">
               <span class="type-badge">${chartType}</span>
               <span class="live-badge">⚡ LIVE</span>
+              <button id="theme-toggle" class="theme-toggle" title="Toggle theme">${themeIcon}</button>
             </div>
           </div>
           <div class="chart-container">
@@ -324,10 +466,13 @@
           ${insightsHtml}
         </div>
       `;
+      
+      // Add theme toggle listener
+      document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
-      // Prepare datasets with new color palette
+      // Prepare datasets with color palette
       const datasets = data.series.map((serie, i) => {
-        const color = serie.color || COLORS.palette[i % COLORS.palette.length];
+        const color = COLORS.palette[i % COLORS.palette.length];
         const bgColor = COLORS.paletteBg[i % COLORS.paletteBg.length];
         
         return {
@@ -337,7 +482,7 @@
             ? COLORS.palette.slice(0, (serie.valores || []).length)
             : bgColor,
           borderColor: ['pie', 'doughnut', 'polarArea'].includes(chartType)
-            ? '#0F172A'
+            ? (getTheme() === 'dark' ? '#0F172A' : '#FFFFFF')
             : color,
           borderWidth: ['pie', 'doughnut', 'polarArea'].includes(chartType) ? 3 : 2.5,
           fill: chartType === 'line' ? true : false,
@@ -359,7 +504,7 @@
           legend: {
             position: ['pie', 'doughnut', 'polarArea'].includes(chartType) ? 'right' : 'top',
             labels: {
-              color: '#CBD5E1',
+              color: COLORS.legend,
               font: { 
                 family: "'JetBrains Mono', monospace",
                 size: 11 
@@ -370,10 +515,10 @@
           },
           title: { display: false },
           tooltip: {
-            backgroundColor: 'rgba(15,23,42,0.95)',
+            backgroundColor: COLORS.tooltipBg,
             titleColor: COLORS.primary,
-            bodyColor: '#E2E8F0',
-            borderColor: COLORS.primary,
+            bodyColor: COLORS.tooltipText,
+            borderColor: COLORS.tooltipBorder,
             borderWidth: 1,
             padding: 12,
             cornerRadius: 8,
@@ -387,16 +532,16 @@
       if (!['pie', 'doughnut', 'polarArea', 'radar'].includes(chartType)) {
         baseOptions.scales = {
           x: {
-            grid: { color: 'rgba(100,116,139,0.15)' },
+            grid: { color: COLORS.grid },
             ticks: { 
-              color: '#64748B',
+              color: COLORS.tick,
               font: { size: 10 }
             }
           },
           y: {
-            grid: { color: 'rgba(100,116,139,0.15)' },
+            grid: { color: COLORS.grid },
             ticks: { 
-              color: '#64748B',
+              color: COLORS.tick,
               font: { size: 10 }
             }
           }
@@ -407,14 +552,14 @@
       if (['radar', 'polarArea'].includes(chartType)) {
         baseOptions.scales = {
           r: {
-            grid: { color: 'rgba(100,116,139,0.2)' },
-            angleLines: { color: 'rgba(100,116,139,0.2)' },
+            grid: { color: COLORS.grid },
+            angleLines: { color: COLORS.grid },
             pointLabels: { 
-              color: '#CBD5E1',
+              color: COLORS.legend,
               font: { size: 11 }
             },
             ticks: { 
-              color: '#64748B',
+              color: COLORS.tick,
               backdropColor: 'transparent',
               font: { size: 9 }
             }
