@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinSage Chart</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-body: #0f172a;
+      --bg-card: #1e293b;
+      --bg-hover: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --accent-blue: #3b82f6;
+      --trend-up: #34D399;
+      --trend-down: #F87171;
+      --trend-neutral: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg-body); min-height: 100vh; font-family: 'Inter', system-ui, -apple-system, sans-serif; color: var(--text-main); }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+    .loading { display: flex; align-items: center; justify-content: center; height: 100vh; color: var(--text-muted); }
+    h2 { font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 16px; text-align: center; }
+    .metrics { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
+    .metric-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px 20px; min-width: 140px; text-align: center; }
+    .metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 6px; }
+    .metric-value { font-size: 22px; font-weight: 700; color: var(--text-main); }
+    .trend-up { color: var(--trend-up); }
+    .trend-down { color: var(--trend-down); }
+    .trend-neutral { color: var(--trend-neutral); }
+    .chart-container { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+    canvas { max-height: 400px; }
+    .insights { background: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent-blue); border-radius: 0 8px 8px 0; padding: 16px; margin-top: 20px; }
+    .insights-title { font-weight: 700; color: var(--accent-blue); margin-bottom: 10px; font-size: 14px; }
+    .insights ul { margin: 0; padding-left: 20px; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+    .insights li { margin-bottom: 6px; }
+  </style>
+</head>
+<body>
+  <div id="root" class="loading">Esperando datos...</div>
+  <script type="module">
+    import { App } from "https://unpkg.com/@modelcontextprotocol/ext-apps@0.4.0/app-with-deps";
+
+    const app = new App({ name: "FinSage Chart", version: "1.0.0" });
+    let chartInstance = null;
+
+    const defaultColors = [
+      '#3B82F6',
+      '#34D399',
+      '#F59E0B',
+      '#F87171',
+      '#A78BFA',
+      '#EC4899',
+      '#14B8A6',
+      '#FB923C',
+    ];
+
+    function renderChart(data) {
+      const root = document.getElementById('root');
+      root.className = 'container';
+      
+      // Build metrics HTML
+      let metricsHtml = '';
+      if (data.metricas && data.metricas.length > 0) {
+        const items = data.metricas.map(m => {
+          const icon = m.tendencia === 'up' ? '↑' : m.tendencia === 'down' ? '↓' : '→';
+          const trendClass = m.tendencia === 'up' ? 'trend-up' : m.tendencia === 'down' ? 'trend-down' : 'trend-neutral';
+          return `<div class="metric-card">
+            <div class="metric-label">${m.label}</div>
+            <div class="metric-value">${m.valor} <span class="${trendClass}">${icon}</span></div>
+          </div>`;
+        }).join('');
+        metricsHtml = `<div class="metrics">${items}</div>`;
+      }
+
+      // Build insights HTML
+      let insightsHtml = '';
+      if (data.insights && data.insights.length > 0) {
+        const items = data.insights.map(i => `<li>${i}</li>`).join('');
+        insightsHtml = `<div class="insights">
+          <div class="insights-title">💡 Insights</div>
+          <ul>${items}</ul>
+        </div>`;
+      }
+
+      root.innerHTML = `
+        <h2>${data.titulo}</h2>
+        ${metricsHtml}
+        <div class="chart-container">
+          <canvas id="chart"></canvas>
+        </div>
+        ${insightsHtml}
+      `;
+
+      // Prepare datasets
+      const datasets = data.series.map((serie, i) => ({
+        label: serie.nombre || `Serie ${i+1}`,
+        data: serie.valores || [],
+        backgroundColor: serie.color || defaultColors[i % defaultColors.length],
+        borderColor: serie.color || defaultColors[i % defaultColors.length],
+        borderWidth: 2,
+        fill: false,
+        tension: 0.3,
+        pointBackgroundColor: serie.color || defaultColors[i % defaultColors.length],
+        pointBorderColor: serie.color || defaultColors[i % defaultColors.length],
+        pointRadius: 4,
+        pointHoverRadius: 6
+      }));
+
+      // Create chart
+      const ctx = document.getElementById('chart').getContext('2d');
+      if (chartInstance) chartInstance.destroy();
+      chartInstance = new Chart(ctx, {
+        type: data.tipo,
+        data: { labels: data.labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                color: '#f8fafc',
+                font: { size: 12, weight: '500' },
+                padding: 16,
+                usePointStyle: true,
+                pointStyle: 'rect'
+              }
+            },
+            title: { display: false },
+            tooltip: {
+              backgroundColor: '#1e293b',
+              titleColor: '#f8fafc',
+              bodyColor: '#94a3b8',
+              borderColor: '#334155',
+              borderWidth: 1,
+              padding: 12,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            x: {
+              grid: {
+                color: 'rgba(51, 65, 85, 0.5)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 }
+              }
+            },
+            y: {
+              grid: {
+                color: 'rgba(51, 65, 85, 0.5)',
+                drawBorder: false
+              },
+              ticks: {
+                color: '#94a3b8',
+                font: { size: 11 }
+              }
+            },
+            r: {
+              grid: {
+                color: 'rgba(51, 65, 85, 0.5)'
+              },
+              angleLines: {
+                color: 'rgba(51, 65, 85, 0.5)'
+              },
+              pointLabels: {
+                color: '#94a3b8',
+                font: { size: 11 }
+              },
+              ticks: {
+                color: '#94a3b8',
+                backdropColor: 'transparent',
+                font: { size: 10 }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    app.ontoolresult = (result) => {
+      const textContent = result.content?.find(c => c.type === 'text');
+      if (textContent) {
+        try {
+          const data = JSON.parse(textContent.text);
+          if (data.chart_data) {
+            renderChart(data.chart_data);
+          }
+        } catch (e) {
+          console.error('Error parsing chart data:', e);
+        }
+      }
+    };
+
+    await app.connect();
+  </script>
+</body>
+</html>

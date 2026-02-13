@@ -6,6 +6,7 @@ import os
 import json
 import requests
 from datetime import datetime
+from pathlib import Path
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
@@ -24,149 +25,14 @@ mcp = FastMCP("finsage")
 # URI del recurso UI para charts
 CHART_VIEW_URI = "ui://finsage/chart-view.html"
 
-# HTML embebido para el visor de charts
-CHART_VIEW_HTML = """<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="color-scheme" content="light dark">
-  <title>FinSage Chart</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #f1f5f9; min-height: 100vh; font-family: system-ui, -apple-system, sans-serif; }
-    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
-    .loading { display: flex; align-items: center; justify-content: center; height: 100vh; color: #64748b; }
-    h2 { font-size: 20px; font-weight: bold; color: #1e293b; margin-bottom: 16px; text-align: center; }
-    .metrics { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-    .metric-card { background: #f8fafc; border-radius: 8px; padding: 12px 16px; min-width: 120px; text-align: center; }
-    .metric-label { font-size: 12px; color: #64748b; margin-bottom: 4px; }
-    .metric-value { font-size: 20px; font-weight: bold; color: #1e293b; }
-    .trend-up { color: #10b981; }
-    .trend-down { color: #ef4444; }
-    .trend-neutral { color: #6b7280; }
-    .chart-container { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    canvas { max-height: 400px; }
-    .insights { background: #eff6ff; border-left: 4px solid #3b82f6; border-radius: 0 8px 8px 0; padding: 16px; margin-top: 20px; }
-    .insights-title { font-weight: bold; color: #1e40af; margin-bottom: 8px; font-size: 14px; }
-    .insights ul { margin: 0; padding-left: 20px; color: #1e3a8a; font-size: 14px; }
-    .insights li { margin-bottom: 4px; }
-    @media (prefers-color-scheme: dark) {
-      body { background: #1e293b; }
-      h2 { color: #f1f5f9; }
-      .metric-card { background: #334155; }
-      .metric-label { color: #94a3b8; }
-      .metric-value { color: #f1f5f9; }
-      .chart-container { background: #334155; }
-      .insights { background: #1e3a5f; border-color: #3b82f6; }
-      .insights-title { color: #93c5fd; }
-      .insights ul { color: #bfdbfe; }
-    }
-  </style>
-</head>
-<body>
-  <div id="root" class="loading">Esperando datos...</div>
-  <script type="module">
-    import { App } from "https://unpkg.com/@modelcontextprotocol/ext-apps@0.4.0/app-with-deps";
+# Cargar HTML desde archivo externo
+TEMPLATES_DIR = Path(__file__).parent / "templates"
 
-    const app = new App({ name: "FinSage Chart", version: "1.0.0" });
-    let chartInstance = null;
-
-    const defaultColors = [
-      'rgba(59, 130, 246, 0.8)',
-      'rgba(16, 185, 129, 0.8)',
-      'rgba(245, 158, 11, 0.8)',
-      'rgba(239, 68, 68, 0.8)',
-      'rgba(139, 92, 246, 0.8)',
-      'rgba(236, 72, 153, 0.8)',
-      'rgba(20, 184, 166, 0.8)',
-      'rgba(249, 115, 22, 0.8)',
-    ];
-
-    function renderChart(data) {
-      const root = document.getElementById('root');
-      root.className = 'container';
-      
-      // Build metrics HTML
-      let metricsHtml = '';
-      if (data.metricas && data.metricas.length > 0) {
-        const items = data.metricas.map(m => {
-          const icon = m.tendencia === 'up' ? '↑' : m.tendencia === 'down' ? '↓' : '→';
-          const trendClass = m.tendencia === 'up' ? 'trend-up' : m.tendencia === 'down' ? 'trend-down' : 'trend-neutral';
-          return `<div class="metric-card">
-            <div class="metric-label">${m.label}</div>
-            <div class="metric-value">${m.valor} <span class="${trendClass}">${icon}</span></div>
-          </div>`;
-        }).join('');
-        metricsHtml = `<div class="metrics">${items}</div>`;
-      }
-
-      // Build insights HTML
-      let insightsHtml = '';
-      if (data.insights && data.insights.length > 0) {
-        const items = data.insights.map(i => `<li>${i}</li>`).join('');
-        insightsHtml = `<div class="insights">
-          <div class="insights-title">💡 Insights</div>
-          <ul>${items}</ul>
-        </div>`;
-      }
-
-      root.innerHTML = `
-        <h2>${data.titulo}</h2>
-        ${metricsHtml}
-        <div class="chart-container">
-          <canvas id="chart"></canvas>
-        </div>
-        ${insightsHtml}
-      `;
-
-      // Prepare datasets
-      const datasets = data.series.map((serie, i) => ({
-        label: serie.nombre || `Serie ${i+1}`,
-        data: serie.valores || [],
-        backgroundColor: serie.color || defaultColors[i % defaultColors.length],
-        borderColor: serie.color || defaultColors[i % defaultColors.length],
-        borderWidth: 2,
-        fill: false,
-        tension: 0.3
-      }));
-
-      // Create chart
-      const ctx = document.getElementById('chart').getContext('2d');
-      if (chartInstance) chartInstance.destroy();
-      chartInstance = new Chart(ctx, {
-        type: data.tipo,
-        data: { labels: data.labels, datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: true,
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: false }
-          }
-        }
-      });
-    }
-
-    app.ontoolresult = (result) => {
-      const textContent = result.content?.find(c => c.type === 'text');
-      if (textContent) {
-        try {
-          const data = JSON.parse(textContent.text);
-          if (data.chart_data) {
-            renderChart(data.chart_data);
-          }
-        } catch (e) {
-          console.error('Error parsing chart data:', e);
-        }
-      }
-    };
-
-    await app.connect();
-  </script>
-</body>
-</html>"""
+def load_template(name: str) -> str:
+    """Carga un template HTML desde la carpeta templates."""
+    template_path = TEMPLATES_DIR / name
+    with open(template_path, 'r', encoding='utf-8') as f:
+        return f.read()
 
 
 # Resource que sirve el HTML del visor de charts
@@ -177,7 +43,7 @@ CHART_VIEW_HTML = """<!DOCTYPE html>
 )
 def chart_view() -> str:
     """HTML resource for chart visualization."""
-    return CHART_VIEW_HTML
+    return load_template("chart-view.html")
 
 
 def decode_unicode(text: str) -> str:
