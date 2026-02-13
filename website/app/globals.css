@@ -1,0 +1,130 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 160 84% 39%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 255 71% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 0 71% 65%;
+    --accent-foreground: 0 0% 100%;
+    --warning: 43 96% 50%;
+    --info: 193 91% 43%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 160 84% 39%;
+    --radius: 0.75rem;
+    --gradient-from: 210 40% 98%;
+    --gradient-via: 210 40% 96%;
+    --gradient-to: 214 32% 91%;
+  }
+
+  .dark {
+    --background: 222 47% 6%;
+    --foreground: 214 32% 91%;
+    --card: 222 47% 8%;
+    --card-foreground: 214 32% 91%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 214 32% 91%;
+    --primary: 160 100% 45%;
+    --primary-foreground: 222 47% 6%;
+    --secondary: 255 71% 67%;
+    --secondary-foreground: 222 47% 6%;
+    --muted: 217 33% 12%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 0 71% 71%;
+    --accent-foreground: 222 47% 6%;
+    --warning: 43 100% 50%;
+    --info: 193 100% 43%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217 19% 22%;
+    --input: 217 19% 22%;
+    --ring: 160 100% 45%;
+    --gradient-from: 222 47% 4%;
+    --gradient-via: 222 41% 9%;
+    --gradient-to: 222 47% 6%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', system-ui, sans-serif;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.5);
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass card effect */
+.glass-card {
+  @apply bg-card/70 backdrop-blur-xl border border-border/50;
+}
+
+.dark .glass-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(100, 116, 139, 0.18);
+}
+
+/* Glow effects */
+.glow-primary {
+  box-shadow: 0 0 20px rgba(0, 229, 160, 0.15);
+}
+.glow-secondary {
+  box-shadow: 0 0 20px rgba(123, 97, 255, 0.15);
+}
+
+/* Animation keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 229, 160, 0.2); }
+  50% { box-shadow: 0 0 40px rgba(0, 229, 160, 0.4); }
+}
