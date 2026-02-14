@@ -270,6 +270,54 @@ def GET_QUOTE(symbol: str) -> dict:
         return {"error": str(e)}
 
 @mcp.tool()
+def GET_BULK_QUOTES(symbols: list[str]) -> dict:
+    """
+    Obtiene cotizaciones en tiempo real para múltiples acciones de EE.UU. en una sola llamada.
+    Internamente consulta cada símbolo y consolida los resultados.
+
+    Args:
+        symbols: Lista de símbolos de ticker (ej: ["AAPL", "MSFT", "GOOGL", "TSLA"])
+
+    Returns:
+        Objeto con cotizaciones de todos los símbolos solicitados, incluyendo precio actual,
+        cambio, porcentaje de cambio, máximo/mínimo del día, apertura y cierre anterior.
+        También incluye conteo de éxitos y errores.
+    """
+    results = []
+    errors = []
+
+    for symbol in symbols:
+        try:
+            params = {'symbol': symbol.upper()}
+            data = fetch_finnhub('quote', params)
+
+            results.append({
+                "symbol": symbol.upper(),
+                "current_price": data.get('c'),
+                "change": data.get('d'),
+                "percent_change": data.get('dp'),
+                "high": data.get('h'),
+                "low": data.get('l'),
+                "open": data.get('o'),
+                "previous_close": data.get('pc'),
+                "timestamp": datetime.fromtimestamp(data.get('t', 0)).isoformat() if data.get('t') else None
+            })
+        except Exception as e:
+            errors.append({
+                "symbol": symbol.upper(),
+                "error": str(e)
+            })
+
+    return {
+        "total_requested": len(symbols),
+        "successful": len(results),
+        "failed": len(errors),
+        "quotes": results,
+        "errors": errors if errors else None
+    }
+
+
+@mcp.tool()
 def GET_BASIC_FINANCIALS(symbol: str, metric: str = "all") -> dict:
     """
     Obtiene métricas financieras básicas de una compañía como margen, P/E ratio, 52-week high/low, etc.
